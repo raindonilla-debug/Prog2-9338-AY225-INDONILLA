@@ -1,96 +1,87 @@
 /**
- * =====================================================
- * Student Name    : Rhenz A. Indonilla
- * Course          : BSCSIT 1203 Programming 2
- * Assignment      : Programming Assignment 1 — 3x3 Matrix Determinant Solver
- * School          : University of Perpetual Help System DALTA, Molino Campus
- * Date            : April 14, 2026
- * GitHub Repo     : https://github.com/[raindonilla-debug]/uphsd-cs-[Indonilla]-[Rhenz]
- *
- * Description:
- * This program computes the determinant of a hardcoded 3x3 matrix assigned 
- * for Math 101. The solution is computed using cofactor expansion along 
- * the first row.
- * =====================================================
+ * Name: Rhenz A. Indonilla
+ * Student ID: 22-1550-135
+ * Course: BSCSIT 1203 Programming 2
+ * Assignment: Assignment 01 - Determinant Solver
+ * Date: April 12, 2026
+ * Description: Computes the determinant of a 3x3 matrix using cofactor expansion
+ * along the first row with step-by-step console output.
  */
+
 public class DeterminantSolver {
 
-    // ── SECTION 1: Matrix Declaration ───────────────────────────────────
-    // Values from the provided image: Row 1 (5,3,1), Row 2 (2,4,6), Row 3 (1,5,3)
-    static int[][] matrix = {
-        { 5, 3, 1 },   // Row 1
-        { 2, 4, 6 },   // Row 2
-        { 1, 5, 3 }    // Row 3
-    };
-
-    // ── SECTION 2: 2×2 Determinant Helper ───────────────────────────────
-    static int computeMinor(int a, int b, int c, int d) {
-        return (a * d) - (b * c);
-    }
-
-    // ── SECTION 3: Matrix Printer ────────────────────────────────────────
-    static void printMatrix(int[][] m) {
-        System.out.println("┌               ┐");
-        for (int[] row : m) {
-            System.out.printf("│  %2d  %2d  %2d  │%n", row[0], row[1], row[2]);
-        }
-        System.out.println("└               ┘");
-    }
-
-    // ── SECTION 4: Step-by-Step Determinant Solver ──────────────────────
-    static void solveDeterminant(int[][] m) {
-
-        // Print the header and the matrix
-        System.out.println("=".repeat(52));
-        System.out.println("  3x3 MATRIX DETERMINANT SOLVER");
-        System.out.println("  Student: [Rhenz A. Indonilla  ]");
-        System.out.println("  Assigned Matrix:");
-        System.out.println("=".repeat(52));
-        printMatrix(m);
-        System.out.println("=".repeat(52));
-
-        // ── Step 1: Compute minor M₁₁ ──
-        int minor11 = computeMinor(m[1][1], m[1][2], m[2][1], m[2][2]);
-        System.out.printf("  Step 1 — Minor M₁₁: det([%d,%d],[%d,%d]) = (%d×%d)-(%d×%d) = %d%n",
-            m[1][1], m[1][2], m[2][1], m[2][2],
-            m[1][1], m[2][2], m[1][2], m[2][1], minor11);
-
-        // ── Step 2: Compute minor M₁₂ ──
-        int minor12 = computeMinor(m[1][0], m[1][2], m[2][0], m[2][2]);
-        System.out.printf("  Step 2 — Minor M₁₂: det([%d,%d],[%d,%d]) = (%d×%d)-(%d×%d) = %d%n",
-            m[1][0], m[1][2], m[2][0], m[2][2],
-            m[1][0], m[2][2], m[1][2], m[2][0], minor12);
-
-        // ── Step 3: Compute minor M₁₃ ──
-        int minor13 = computeMinor(m[1][0], m[1][1], m[2][0], m[2][1]);
-        System.out.printf("  Step 3 — Minor M₁₃: det([%d,%d],[%d,%d]) = (%d×%d)-(%d×%d) = %d%n",
-            m[1][0], m[1][1], m[2][0], m[2][1],
-            m[1][0], m[2][1], m[1][1], m[2][0], minor13);
-
-        // ── Cofactor Terms ──
-        int c11 =  m[0][0] * minor11;
-        int c12 = -m[0][1] * minor12;
-        int c13 =  m[0][2] * minor13;
-
-        System.out.println();
-        System.out.printf("  Cofactor C₁₁ = (+1) × %d × %d = %d%n", m[0][0], minor11, c11);
-        System.out.printf("  Cofactor C₁₂ = (-1) × %d × %d = %d%n", m[0][1], minor12, c12);
-        System.out.printf("  Cofactor C₁₃ = (+1) × %d × %d = %d%n", m[0][2], minor13, c13);
-
-        // ── Final Determinant ──
-        int det = c11 + c12 + c13;
-        System.out.printf("%n  det(M) = %d + (%d) + %d%n", c11, c12, c13);
-        System.out.println("=".repeat(52));
-        System.out.printf("  ✓  DETERMINANT = %d%n", det);
-
-        // ── Singular Matrix Check ──
-        if (det == 0) {
-            System.out.println("  ⚠ The matrix is SINGULAR — it has no inverse.");
-        }
-        System.out.println("=".repeat(52));
-    }
-
     public static void main(String[] args) {
+        // Matrix declaration
+        int[][] matrix = {
+            {2, 1, 3},
+            {4, 5, 2},
+            {1, 3, 4}
+        };
+
+        printHeader();
+        printMatrix(matrix);
         solveDeterminant(matrix);
+    }
+
+    public static void printHeader() {
+        System.out.println("==============================================");
+        System.out.println("   3x3 MATRIX DETERMINANT SOLVER");
+        System.out.println("   Student: Rhenz A. Indonilla"); // Added name here
+        System.out.println("   Assigned Matrix:");
+        System.out.println("==============================================");
+    }
+
+    public static void printMatrix(int[][] m) {
+        for (int[] row : m) {
+            System.out.print("| ");
+            for (int val : row) {
+                System.out.printf("%2d ", val);
+            }
+            System.out.println("|");
+        }
+        System.out.println("==============================================\n");
+    }
+
+    public static int computeMinor(int a, int b, int c, int d, int step) {
+        int result = (a * d) - (b * c);
+        // Improved the string formatting for better alignment
+        System.out.printf("Step %d - Minor M1%d: det([%d, %d], [%d, %d]) = (%d*%d) - (%d*%d) = %d - %d = %d\n",
+                step, step, a, b, c, d, a, d, b, c, (a * d), (b * c), result);
+        return result;
+    }
+
+    public static void solveDeterminant(int[][] m) {
+        System.out.println("Expanding along Row 1 (cofactor expansion):\n");
+
+        // Step-by-step minor calculations
+        // M11: Minor from deleting Row 1, Col 1
+        int m11 = computeMinor(m[1][1], m[1][2], m[2][1], m[2][2], 1);
+        // M12: Minor from deleting Row 1, Col 2
+        int m12 = computeMinor(m[1][0], m[1][2], m[2][0], m[2][2], 2);
+        // M13: Minor from deleting Row 1, Col 3
+        int m13 = computeMinor(m[1][0], m[1][1], m[2][0], m[2][1], 3);
+
+        // Cofactor calculations: C_ij = (-1)^(i+j) * a_ij * M_ij
+        int c11 = 1 * m[0][0] * m11;
+        int c12 = -1 * m[0][1] * m12;
+        int c13 = 1 * m[0][2] * m13;
+
+        System.out.println("\nCofactor C11 = (+1) x " + m[0][0] + " x " + m11 + " = " + c11);
+        System.out.println("Cofactor C12 = (-1) x " + m[0][1] + " x " + m12 + " = " + c12);
+        System.out.println("Cofactor C13 = (+1) x " + m[0][2] + " x " + m13 + " = " + c13);
+
+        int determinant = c11 + c12 + c13;
+        System.out.printf("\ndet(M) = %d + (%d) + %d\n", c11, c12, c13);
+        
+        System.out.println("\n==============================================");
+        System.out.println(" ✓  DETERMINANT = " + determinant);
+        
+        // Handle singular matrix case
+        if (determinant == 0) {
+            System.out.println(" The matrix is SINGULAR—it has no inverse.");
+        } else {
+            System.out.println(" The matrix is NON-SINGULAR and invertible.");
+        }
+        System.out.println("==============================================");
     }
 }
