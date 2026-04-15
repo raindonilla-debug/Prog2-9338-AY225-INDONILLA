@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional BMI Attendance Tracker</title>
+    <style>
+        /* Background Design */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        /* Glassmorphism Container */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 450px;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 { text-align: center; color: #1e3c72; margin-top: 0; }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensures padding doesn't break width */
+        }
+
+        canvas {
+            border: 2px dashed #2a5298;
+            background: #fff;
+            border-radius: 5px;
+            cursor: crosshair;
+            margin: 10px 0;
+        }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn-calc { background: #1e3c72; color: white; }
+        .btn-clear { background: #f44336; color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Table Styling */
+        table {
+            width: 90%;
+            max-width: 800px;
+            margin-top: 30px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        th { background: #1e3c72; color: white; padding: 15px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+        tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Status</h2>
+    
+    <div class="input-group">
+        <label>Enter Full Name</label>
+        <input type="text" id="name" placeholder="e.g. John Doe">
+    </div>
+
+    <div class="input-group" style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+            <label>Weight (kg)</label>
+            <input type="number" id="weight" step="0.1">
+        </div>
+        <div style="flex: 1;">
+            <label>Height (m)</label>
+            <input type="number" id="height" step="0.01">
+        </div>
+    </div>
+
+    <label>E-Signature</label>
+    <canvas id="sig" width="390" height="120"></canvas>
+
+    <div class="btn-group">
+        <button class="btn-clear" onclick="clearSig()">Clear</button>
+        <button class="btn-calc" onclick="calculate()">Calculate & Log</button>
+    </div>
+</div>
+
+<table id="history">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>BMI</th>
+            <th>Category</th>
+            <th>Signature</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const canvas = document.getElementById('sig');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+
+    // Drawing Logic
+    canvas.onmousedown = () => isDrawing = true;
+    window.onmouseup = () => { isDrawing = false; ctx.beginPath(); };
+    canvas.onmousemove = (e) => {
+        if (!isDrawing) return;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#000';
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+    };
+
+    function clearSig() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function calculate() {
+        const name = document.getElementById('name').value;
+        const w = parseFloat(document.getElementById('weight').value);
+        const h = parseFloat(document.getElementById('height').value);
+
+        // Conditional Logic / Formula
+        if (!name || isNaN(w) || isNaN(h)) {
+            alert("Please complete all fields!");
+            return;
+        }
+
+        const bmi = w / (h * h);
+        let category = (bmi < 18.5) ? "Underweight" : (bmi < 25) ? "Normal" : "Overweight";
+
+        // Add to Table
+        const tbody = document.getElementById('history').getElementsByTagName('tbody')[0];
+        const row = tbody.insertRow(0);
+        
+        row.insertCell(0).innerHTML = `<strong>${name}</strong>`;
+        row.insertCell(1).innerText = bmi.toFixed(2);
+        row.insertCell(2).innerText = category;
+        
+        const sigImg = document.createElement('img');
+        sigImg.src = canvas.toDataURL();
+        sigImg.style.height = "40px";
+        row.insertCell(3).appendChild(sigImg);
+
+        // Reset
+        document.getElementById('name').value = '';
+        document.getElementById('weight').value = '';
+        document.getElementById('height').value = '';
+        clearSig();
+    }
+</script>
+
+</body>
+</html>

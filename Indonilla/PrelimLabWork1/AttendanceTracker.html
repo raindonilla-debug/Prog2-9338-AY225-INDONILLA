@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pro Attendance Tracker - JS Version</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f0f0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 400px; }
+        input { width: 95%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        canvas { border: 1px solid #000; background: #fff; cursor: crosshair; margin: 10px 0; }
+        .buttons { display: flex; gap: 10px; }
+        button { flex: 1; padding: 10px; cursor: pointer; border: none; border-radius: 4px; }
+        .btn-enter { background: #28a745; color: white; }
+        .btn-clear { background: #dc3545; color: white; }
+        table { margin-top: 20px; width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>LogIn Here</h2>
+    <label>Attendance Name:</label>
+    <input type="text" id="name" placeholder="Enter Name">
+    
+    <label>Course/Year:</label>
+    <input type="text" id="course" placeholder="Enter Course">
+
+    <label>Running Time:</label>
+    <input type="text" id="clock" readonly>
+
+    <label>Draw E-Signature:</label>
+    <canvas id="sig-canvas" width="360" height="150"></canvas>
+
+    <div class="buttons">
+        <button class="btn-clear" onclick="clearCanvas()">Delete Signature</button>
+        <button class="btn-enter" onclick="addAttendance()">Enter Attendance</button>
+    </div>
+</div>
+
+<table id="historyTable">
+    <thead>
+        <tr><th>Name</th><th>Course</th><th>Time In</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    // --- Logic & Computation ---
+    const canvas = document.getElementById('sig-canvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    // Clock Logic (Consistent with Java Timer)
+    setInterval(() => {
+        document.getElementById('clock').value = new Date().toLocaleString();
+    }, 1000);
+
+    // Canvas Logic
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+        if (!drawing) return;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Conditional Evaluation & Output
+    function addAttendance() {
+        const name = document.getElementById('name').value;
+        const course = document.getElementById('course').value;
+        const time = document.getElementById('clock').value;
+
+        // Evaluation Logic
+        if (name.trim() === "" || course.trim() === "") {
+            alert("Error: Please fill in all fields.");
+            return;
+        }
+
+        // Logic Consistency: Update Table
+        const table = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+        const row = table.insertRow(0);
+        row.insertCell(0).innerText = name;
+        row.insertCell(1).innerText = course;
+        row.insertCell(2).innerText = time;
+
+        // Reset
+        document.getElementById('name').value = "";
+        document.getElementById('course').value = "";
+        clearCanvas();
+    }
+</script>
+
+</body>
+</html>
